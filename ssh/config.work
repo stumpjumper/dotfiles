@@ -1,0 +1,39 @@
+# Work Mac (no Tailscale). Jump via condor's public IP; destination
+# HostNames are MagicDNS, resolved on condor.
+# Per-machine keys and overrides: ~/.ssh/config.local (created empty by install.sh)
+Include ~/.ssh/config.local
+
+Host condor
+    HostName 74.208.212.14
+    User aal
+    ServerAliveInterval 60
+
+Host turbo
+    HostName turbo
+    User aal
+    ProxyJump condor
+    ServerAliveInterval 60
+
+Host buzon
+    HostName buzon
+    User aal
+    ProxyJump condor
+    ServerAliveInterval 60
+
+Host b29
+    HostName b29
+    User aal
+    ProxyJump condor
+    ServerAliveInterval 60
+
+Host dynamo
+    HostName dynamo
+    User aal
+    ProxyJump condor
+    ServerAliveInterval 60
+
+Host ben
+    HostName ben
+    User aal
+    ProxyJump condor
+    ServerAliveInterval 60

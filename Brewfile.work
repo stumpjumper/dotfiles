@@ -1,0 +1,6 @@
+# Work Mac — slim. Do not copy turbo's media/build stack.
+brew "emacs"
+brew "gh"
+brew "herdr"
+brew "ripgrep"
+brew "tmux"

@@ -1,0 +1,6 @@
+# Always sourced, including non-interactive ssh.
+# Keep this tiny. Machine PATH belongs in ~/.config/dotfiles/local.sh
+# (nano: /usr/local/bin so aal's docker context works).
+
+export PATH="$HOME/bin:$PATH"
+[ -f "$HOME/.config/dotfiles/local.sh" ] && . "$HOME/.config/dotfiles/local.sh"

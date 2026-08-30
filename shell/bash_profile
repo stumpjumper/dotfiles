@@ -1,0 +1,2 @@
+# Login bash. Always pull in bashrc (which no-ops when non-interactive).
+[ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"

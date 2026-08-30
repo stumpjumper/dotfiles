@@ -1,0 +1,9 @@
+# Copy to ~/.config/dotfiles/local.sh (not in git).
+# Sourced from zshenv (every zsh, including non-interactive ssh) and
+# from interactive bashrc. Keep this to PATH and env; aliases live in
+# shell/aliases.sh.
+#
+# nano (docker CLI on PATH for aal's `ssh nano@localhost` context):
+#   export PATH="/usr/local/bin:$PATH"
+#
+# bun / pnpm / grok / nanoclaw belong here, not in the shared zshrc.

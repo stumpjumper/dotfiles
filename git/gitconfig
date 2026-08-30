@@ -1,0 +1,10 @@
+[user]
+	name = Alfred Lorber
+	email = Alfred@TheLorbers.com
+
+[core]
+	editor = emacs
+
+[color]
+	ui = true
+	diff = true

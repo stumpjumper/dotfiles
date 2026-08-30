@@ -1,0 +1,27 @@
+# Interactive bash. Login shells reach here via bash_profile.
+# Non-interactive bash returns immediately.
+
+case $- in
+  *i*) ;;
+  *) return ;;
+esac
+
+export PATH="$HOME/bin:$PATH"
+
+if [ "$(uname -s)" = Darwin ]; then
+  for p in /opt/homebrew/bin /opt/homebrew/sbin /usr/local/bin; do
+    if [ -d "$p" ]; then
+      case ":$PATH:" in
+        *":$p:"*) ;;
+        *) PATH="$p:$PATH" ;;
+      esac
+    fi
+  done
+  export PATH
+fi
+
+DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
+[ -f "$DOTFILES/shell/aliases.sh" ] && . "$DOTFILES/shell/aliases.sh"
+[ -f "$HOME/.config/dotfiles/local.sh" ] && . "$HOME/.config/dotfiles/local.sh"
+
+PS1='\u@\h:\w\$ '

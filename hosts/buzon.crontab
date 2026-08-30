@@ -1,0 +1,1 @@
+*/5 * * * * ~/dynudns/dynu.sh >/dev/null 2>&1

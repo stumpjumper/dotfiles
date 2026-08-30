@@ -1,0 +1,37 @@
+# Home / Tailscale machines. Hostnames are MagicDNS; Tailscale must be up.
+# Per-machine keys and overrides: ~/.ssh/config.local (created empty by install.sh)
+Include ~/.ssh/config.local
+
+Host nano
+    HostName localhost
+    User nano
+
+Host condor
+    HostName condor
+    User aal
+    ServerAliveInterval 60
+
+Host turbo
+    HostName turbo
+    User aal
+    ServerAliveInterval 60
+
+Host buzon
+    HostName buzon
+    User aal
+    ServerAliveInterval 60
+
+Host b29
+    HostName b29
+    User aal
+    ServerAliveInterval 60
+
+Host dynamo
+    HostName dynamo
+    User aal
+    ServerAliveInterval 60
+
+Host ben
+    HostName ben
+    User aal
+    ServerAliveInterval 60
