@@ -127,14 +127,30 @@ if command -v gh >/dev/null 2>&1; then
 fi
 
 # --- ssh ---
+# nano is a NanoClaw sandbox: never install Host aliases or keys.
+# Inbound is sshd + authorized_keys (aal docker context). Outbound stays off.
 mkdir -p "$HOME/.ssh"
 chmod 700 "$HOME/.ssh"
-if [ ! -f "$HOME/.ssh/config.local" ]; then
-  umask 077
-  touch "$HOME/.ssh/config.local"
-  echo "  ~/.ssh/config.local created (empty; keys/overrides go here)"
+if [ "$(id -un)" = nano ]; then
+  echo "  skipping shared ssh config (nano sandbox: no passwordless outbound)"
+  if [ -L "$HOME/.ssh/config" ]; then
+    rm -f "$HOME/.ssh/config"
+    echo "  removed ssh config symlink"
+  fi
+  if [ ! -f "$HOME/.ssh/config" ]; then
+    umask 077
+    cp "$REPO_DIR/ssh/config.sandbox" "$HOME/.ssh/config"
+    chmod 600 "$HOME/.ssh/config"
+    echo "  wrote fail-closed ~/.ssh/config (copy, not symlink)"
+  fi
+else
+  if [ ! -f "$HOME/.ssh/config.local" ]; then
+    umask 077
+    touch "$HOME/.ssh/config.local"
+    echo "  ~/.ssh/config.local created (empty; keys/overrides go here)"
+  fi
+  relink "$REPO_DIR/ssh/config.$SSH_KIND" "$HOME/.ssh/config"
 fi
-relink "$REPO_DIR/ssh/config.$SSH_KIND" "$HOME/.ssh/config"
 
 # --- herdr: Darwin only; never track sockets/logs/session.json ---
 if [ "$(uname -s)" = Darwin ]; then

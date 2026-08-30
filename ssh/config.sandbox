@@ -1,0 +1,9 @@
+# nano is a NanoClaw sandbox. No passwordless outbound SSH.
+# Inbound access is sshd + authorized_keys, not this file.
+# Copied (not symlinked) so a repo pull cannot restore Host aliases.
+Host *
+    IdentitiesOnly yes
+    IdentityFile /dev/null
+    PubkeyAuthentication no
+    PasswordAuthentication no
+    KbdInteractiveAuthentication no

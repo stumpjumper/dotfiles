@@ -48,9 +48,11 @@ Put bun, pnpm, grok, nanoclaw, and nano’s `/usr/local/bin` (docker CLI for non
 | `config.home` | Tailscale up | MagicDNS | MagicDNS (`turbo`, `buzon`, `b29`, `dynamo`, `ben`) |
 | `config.work` | work Mac, no Tailscale | public IP `74.208.212.14` | MagicDNS via `ProxyJump condor` |
 
-`Host nano` (local user on turbo, not MagicDNS) lives in `~/.ssh/config.local` on turbo only — see `ssh/config.local.turbo.example`.
+`Host nano` (local user on turbo, not MagicDNS) lives in `~/.ssh/config.local` on turbo **aal** only — see `ssh/config.local.turbo.example`.
 
-No private keys. Identity files go in `~/.ssh/config.local`.
+**nano is a sandbox.** `install.sh` does not install ssh Host aliases for user `nano`, and it writes a fail-closed `~/.ssh/config` (`PubkeyAuthentication no`). Do not give nano a private key. Inbound `aal → nano@localhost` (docker context) uses nano’s `authorized_keys`, not outbound SSH.
+
+No private keys in the repo. Identity files go in `~/.ssh/config.local`.
 
 ## Darwin packages
 
@@ -71,7 +73,7 @@ emacs/    emacs.el          ← pi-dots .emacs_simple
 tmux/     tmux.conf         ← Ctrl-T prefix, OSC 52, truecolor
 herdr/    config.toml       ← Darwin only
 git/      gitconfig
-ssh/      config.home  config.work
+ssh/      config.home  config.work  config.sandbox  config.local.turbo.example
 bin/      from pi-dots
 hosts/    reference crontabs; not auto-applied
 ```
@@ -80,7 +82,7 @@ hosts/    reference crontabs; not auto-applied
 
 | Host | OS | Notes |
 |---|---|---|
-| turbo | macOS | users `aal` (bash, do not chsh yet) and `nano` (zsh; first live install) |
+| turbo | macOS | users `aal` (bash, do not chsh yet) and `nano` (zsh; sandbox — no passwordless outbound SSH) |
 | ben | macOS | home Mac |
 | work Mac | macOS | hostname `^s[0-9]+`; SSH out only; `--work` |
 | condor | Ubuntu 24.04 | jump host; bash; tmux 3.4, no herdr |
