@@ -17,8 +17,9 @@ Clone to ~/.dotfiles, then run this script.
            (also selected when hostname matches ^s[0-9])
 
 Existing real files are moved to *.pre-dotfiles.YYYY-MM-DD.
-Does not change the login shell. Does not brew bundle. Does not
-install crontab. Does not touch SSH keys.
+Keeps a real ~/.bashrc and will not add ~/.bash_profile if
+~/.profile exists (Debian/Ubuntu login). Never chsh. Does not
+brew bundle, load crontab, or touch SSH keys.
 EOF
 }
 
@@ -87,8 +88,24 @@ relink() {
 }
 
 # --- shells (both; unused rc files are harmless) ---
-relink "$REPO_DIR/shell/bashrc"       "$HOME/.bashrc"
-relink "$REPO_DIR/shell/bash_profile" "$HOME/.bash_profile"
+# Debian/Ubuntu: keep the distro ~/.bashrc (completion, histappend) and
+# wire aliases through ~/.bash_aliases. Do not create ~/.bash_profile
+# when ~/.profile exists — bash would skip .profile.
+if [ -f "$HOME/.bashrc" ] && [ ! -L "$HOME/.bashrc" ]; then
+  echo "  keeping existing ~/.bashrc (distro/login); wiring ~/.bash_aliases"
+else
+  relink "$REPO_DIR/shell/bashrc" "$HOME/.bashrc"
+fi
+relink "$REPO_DIR/shell/bash_aliases" "$HOME/.bash_aliases"
+
+if [ -f "$HOME/.profile" ] && [ ! -e "$HOME/.bash_profile" ]; then
+  echo "  skipping ~/.bash_profile so ~/.profile still runs on login"
+elif [ -f "$HOME/.profile" ] && [ ! -L "$HOME/.bash_profile" ]; then
+  echo "  keeping existing ~/.bash_profile (would hide ~/.profile if replaced blindly)"
+else
+  relink "$REPO_DIR/shell/bash_profile" "$HOME/.bash_profile"
+fi
+
 relink "$REPO_DIR/shell/zshrc"        "$HOME/.zshrc"
 relink "$REPO_DIR/shell/zshenv"       "$HOME/.zshenv"
 relink "$REPO_DIR/emacs/emacs.el"     "$HOME/.emacs"

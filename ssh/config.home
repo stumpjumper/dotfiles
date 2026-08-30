@@ -2,10 +2,6 @@
 # Per-machine keys and overrides: ~/.ssh/config.local (created empty by install.sh)
 Include ~/.ssh/config.local
 
-Host nano
-    HostName localhost
-    User nano
-
 Host condor
     HostName condor
     User aal

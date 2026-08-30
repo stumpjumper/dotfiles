@@ -24,4 +24,14 @@ DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
 [ -f "$DOTFILES/shell/aliases.sh" ] && . "$DOTFILES/shell/aliases.sh"
 [ -f "$HOME/.config/dotfiles/local.sh" ] && . "$HOME/.config/dotfiles/local.sh"
 
+if [ -z "${BASH_COMPLETION_VERSINFO:-}" ] && [ -z "${POSIXLY_CORRECT:-}" ]; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    # shellcheck disable=SC1091
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    # shellcheck disable=SC1091
+    . /etc/bash_completion
+  fi
+fi
+
 PS1='\u@\h:\w\$ '

@@ -1,2 +1,11 @@
-# Login bash. Always pull in bashrc (which no-ops when non-interactive).
-[ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
+# Login bash.
+# If ~/.profile exists (Debian/Ubuntu), use it — it sources .bashrc and
+# adds ~/bin and ~/.local/bin. Creating this file would otherwise hide
+# .profile; install.sh skips linking it in that case. This path is for
+# machines without a distro .profile (macOS).
+if [ -f "$HOME/.profile" ]; then
+  # shellcheck disable=SC1091
+  . "$HOME/.profile"
+else
+  [ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
+fi

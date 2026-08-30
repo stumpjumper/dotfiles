@@ -1,0 +1,6 @@
+# Compatibility entry point for distro ~/.bashrc that sources ~/.bash_aliases.
+DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
+# shellcheck disable=SC1091
+[ -f "$DOTFILES/shell/aliases.sh" ] && . "$DOTFILES/shell/aliases.sh"
+# shellcheck disable=SC1091
+[ -f "$HOME/.config/dotfiles/local.sh" ] && . "$HOME/.config/dotfiles/local.sh"

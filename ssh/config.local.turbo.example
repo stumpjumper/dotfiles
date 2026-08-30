@@ -1,0 +1,6 @@
+# Turbo-only. Copy into ~/.ssh/config.local on turbo (aal and nano).
+# `nano` is a local user, not a Tailscale host.
+
+Host nano
+    HostName localhost
+    User nano

@@ -21,7 +21,9 @@ Work Mac (or any hostname matching `^s[0-9]`):
 
 `install.sh` will:
 
-- Symlink bash, zsh, emacs, tmux, and `~/bin` scripts
+- Symlink zsh, emacs, tmux, `~/.bash_aliases`, and `~/bin` scripts
+- Keep a real (non-symlink) `~/.bashrc` — Debian/Ubuntu distro file stays
+- Skip `~/.bash_profile` when `~/.profile` exists, so login PATH is not hidden
 - Copy `git/gitconfig` only if `~/.gitconfig` does not exist
 - Add the `gh` credential helper if `gh` is on PATH
 - Symlink `~/.ssh/config` to `ssh/config.home` or `ssh/config.work`
@@ -43,8 +45,10 @@ Put bun, pnpm, grok, nanoclaw, and nano’s `/usr/local/bin` (docker CLI for non
 
 | Profile | When | condor | others |
 |---|---|---|---|
-| `config.home` | Tailscale up | MagicDNS | MagicDNS (`turbo`, `buzon`, `b29`, `dynamo`, `ben`; `nano` → localhost) |
+| `config.home` | Tailscale up | MagicDNS | MagicDNS (`turbo`, `buzon`, `b29`, `dynamo`, `ben`) |
 | `config.work` | work Mac, no Tailscale | public IP `74.208.212.14` | MagicDNS via `ProxyJump condor` |
+
+`Host nano` (local user on turbo, not MagicDNS) lives in `~/.ssh/config.local` on turbo only — see `ssh/config.local.turbo.example`.
 
 No private keys. Identity files go in `~/.ssh/config.local`.
 
@@ -62,7 +66,7 @@ brew bundle --file=~/.dotfiles/Brewfile.work   # work Mac
 ```
 install.sh
 Brewfile  Brewfile.work
-shell/    aliases.sh bashrc bash_profile zshrc zshenv local.sh.example
+shell/    aliases.sh bash_aliases bashrc bash_profile zshrc zshenv local.sh.example
 emacs/    emacs.el          ← pi-dots .emacs_simple
 tmux/     tmux.conf         ← Ctrl-T prefix, OSC 52, truecolor
 herdr/    config.toml       ← Darwin only
