@@ -7,3 +7,6 @@
 #   export PATH="/usr/local/bin:$PATH"
 #
 # bun / pnpm / grok / nanoclaw belong here, not in the shared zshrc.
+#
+# Completions that need `compdef` (bun): guard with DOTFILES_POST_COMPINIT.
+# zshrc re-sources this file after compinit.

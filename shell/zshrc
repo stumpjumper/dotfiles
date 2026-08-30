@@ -22,4 +22,12 @@ DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
 
 autoload -Uz compinit && compinit -u
 
+# Overlay may register completions (e.g. bun) that need compdef.
+if [ -f "$HOME/.config/dotfiles/local.sh" ]; then
+  DOTFILES_POST_COMPINIT=1
+  # shellcheck disable=SC1091
+  . "$HOME/.config/dotfiles/local.sh"
+  unset DOTFILES_POST_COMPINIT
+fi
+
 PS1='%n@%m:%~%# '
