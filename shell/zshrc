@@ -1,23 +1,15 @@
 # Interactive zsh. bun / pnpm / grok / nanoclaw stay in
 # ~/.config/dotfiles/local.sh — not here.
 
+DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
 if [ "$(uname -s)" = Darwin ]; then
-  for p in /opt/homebrew/bin /opt/homebrew/sbin /usr/local/bin; do
-    if [ -d "$p" ]; then
-      case ":$PATH:" in
-        *":$p:"*) ;;
-        *) PATH="$p:$PATH" ;;
-      esac
-    fi
-  done
-  export PATH
+  # shellcheck disable=SC1091
+  . "$DOTFILES/shell/path_darwin.sh"
   [ -d /opt/homebrew/share/zsh/site-functions ] && \
     fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
   # Stale Intel Homebrew completions (Apple Silicon uses /opt/homebrew)
   fpath=( ${fpath:#/usr/local/share/zsh*} )
 fi
-
-DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
 [ -f "$DOTFILES/shell/aliases.sh" ] && . "$DOTFILES/shell/aliases.sh"
 
 autoload -Uz compinit && compinit -u

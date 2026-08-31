@@ -9,19 +9,11 @@ DOTFILES_BASHRC_SOURCED=1
 
 export PATH="$HOME/bin:$PATH"
 
-if [ "$(uname -s)" = Darwin ]; then
-  for p in /opt/homebrew/bin /opt/homebrew/sbin /usr/local/bin; do
-    if [ -d "$p" ]; then
-      case ":$PATH:" in
-        *":$p:"*) ;;
-        *) PATH="$p:$PATH" ;;
-      esac
-    fi
-  done
-  export PATH
-fi
-
 DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
+if [ "$(uname -s)" = Darwin ]; then
+  # shellcheck disable=SC1091
+  . "$DOTFILES/shell/path_darwin.sh"
+fi
 [ -f "$DOTFILES/shell/aliases.sh" ] && . "$DOTFILES/shell/aliases.sh"
 [ -f "$HOME/.config/dotfiles/local.sh" ] && . "$HOME/.config/dotfiles/local.sh"
 
