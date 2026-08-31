@@ -5,6 +5,7 @@ case $- in
   *i*) ;;
   *) return ;;
 esac
+DOTFILES_BASHRC_SOURCED=1
 
 export PATH="$HOME/bin:$PATH"
 
