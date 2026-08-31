@@ -98,10 +98,13 @@ else
 fi
 relink "$REPO_DIR/shell/bash_aliases" "$HOME/.bash_aliases"
 
-if [ -f "$HOME/.profile" ] && [ ! -e "$HOME/.bash_profile" ]; then
+if [ -L "$HOME/.bash_profile" ]; then
+  # Includes dangling links after retargeting ~/.dotfiles.
+  relink "$REPO_DIR/shell/bash_profile" "$HOME/.bash_profile"
+elif [ -f "$HOME/.bash_profile" ]; then
+  echo "  keeping existing ~/.bash_profile"
+elif [ -f "$HOME/.profile" ]; then
   echo "  skipping ~/.bash_profile so ~/.profile still runs on login"
-elif [ -f "$HOME/.profile" ] && [ ! -L "$HOME/.bash_profile" ]; then
-  echo "  keeping existing ~/.bash_profile (would hide ~/.profile if replaced blindly)"
 else
   relink "$REPO_DIR/shell/bash_profile" "$HOME/.bash_profile"
 fi
@@ -121,8 +124,8 @@ fi
 
 if command -v gh >/dev/null 2>&1; then
   gh_bin="$(command -v gh)"
-  git config --global credential.https://github.com.helper "!$gh_bin auth git-credential"
-  git config --global credential.https://gist.github.com.helper "!$gh_bin auth git-credential"
+  git config --global --replace-all credential.https://github.com.helper "!$gh_bin auth git-credential"
+  git config --global --replace-all credential.https://gist.github.com.helper "!$gh_bin auth git-credential"
   echo "  git credential helper -> $gh_bin"
 fi
 
