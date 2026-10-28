@@ -27,17 +27,28 @@ if [ -z "${BASH_COMPLETION_VERSINFO:-}" ] && [ -z "${POSIXLY_CORRECT:-}" ]; then
   fi
 fi
 
-# local.sh may set DOTFILES_PROMPT_LABEL to replace the hostname. Two
-# asset numbers like s1135912 and s1124692 are too easy to mix up.
+# local.sh may set DOTFILES_PROMPT_LABEL. The label replaces the hostname.
+# Shape: studio(3) .../grok_mac_care$
 # DOTFILES_PROMPT_COLOR: cyan, yellow, green, or magenta.
 if [ -n "${DOTFILES_PROMPT_LABEL:-}" ]; then
+  # shellcheck disable=SC1091
+  . "$DOTFILES/shell/prompt.sh"
   case ${DOTFILES_PROMPT_COLOR:-cyan} in
     yellow) _dotfiles_prompt_color=33 ;;
     green) _dotfiles_prompt_color=32 ;;
     magenta) _dotfiles_prompt_color=35 ;;
     *) _dotfiles_prompt_color=36 ;;
   esac
-  PS1="\[\e[${_dotfiles_prompt_color}m\]${DOTFILES_PROMPT_LABEL}\[\e[0m\] \u:\w\$ "
+  _dotfiles_prompt_update() {
+    local d
+    d=$(_dotfiles_prompt_dir)
+    _dotfiles_prompt_dir_val=${d//\\/\\\\}
+  }
+  case ";${PROMPT_COMMAND:-};" in
+    *";_dotfiles_prompt_update;"*) ;;
+    *) PROMPT_COMMAND="_dotfiles_prompt_update${PROMPT_COMMAND:+;$PROMPT_COMMAND}" ;;
+  esac
+  PS1="\[\e[${_dotfiles_prompt_color}m\]${DOTFILES_PROMPT_LABEL}\[\e[0m\](\#) \${_dotfiles_prompt_dir_val}\\\$ "
   unset _dotfiles_prompt_color
 else
   PS1='\u@\h:\w\$ '

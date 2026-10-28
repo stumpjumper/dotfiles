@@ -22,13 +22,27 @@ if [ -f "$HOME/.config/dotfiles/local.sh" ]; then
   unset DOTFILES_POST_COMPINIT
 fi
 
-# See bashrc. local.sh may set DOTFILES_PROMPT_LABEL and DOTFILES_PROMPT_COLOR.
+# See bashrc. Shape: studio(3) .../grok_mac_care$
 if [ -n "${DOTFILES_PROMPT_LABEL:-}" ]; then
+  # shellcheck disable=SC1091
+  . "$DOTFILES/shell/prompt.sh"
   case ${DOTFILES_PROMPT_COLOR:-cyan} in
     yellow|green|magenta|cyan) _dotfiles_prompt_color=$DOTFILES_PROMPT_COLOR ;;
     *) _dotfiles_prompt_color=cyan ;;
   esac
-  PS1="%F{${_dotfiles_prompt_color}}%B${DOTFILES_PROMPT_LABEL}%b%f %n:%~%# "
+  _dotfiles_cmd_count=0
+  _dotfiles_prompt_precmd() {
+    local d
+    _dotfiles_cmd_count=$((_dotfiles_cmd_count + 1))
+    d=$(_dotfiles_prompt_dir)
+    d=${d//%/%%}
+    d=${d//\\/\\\\}
+    _dotfiles_prompt_dir_val=$d
+  }
+  autoload -Uz add-zsh-hook
+  add-zsh-hook precmd _dotfiles_prompt_precmd
+  setopt prompt_subst
+  PS1="%F{${_dotfiles_prompt_color}}%B${DOTFILES_PROMPT_LABEL}%b%f(\${_dotfiles_cmd_count}) \${_dotfiles_prompt_dir_val}\$ "
   unset _dotfiles_prompt_color
 else
   PS1='%n@%m:%~%# '
