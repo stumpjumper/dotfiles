@@ -28,3 +28,7 @@ if [ -z "${BASH_COMPLETION_VERSINFO:-}" ] && [ -z "${POSIXLY_CORRECT:-}" ]; then
 fi
 
 PS1='\u@\h:\w\$ '
+
+# Emacs C-d is delete-char. In bash, Ctrl-D on an empty line is EOF and
+# exits the shell, which makes Herdr close the tab. Refuse that.
+set -o ignoreeof
