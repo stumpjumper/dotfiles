@@ -22,4 +22,14 @@ if [ -f "$HOME/.config/dotfiles/local.sh" ]; then
   unset DOTFILES_POST_COMPINIT
 fi
 
-PS1='%n@%m:%~%# '
+# See bashrc. local.sh may set DOTFILES_PROMPT_LABEL and DOTFILES_PROMPT_COLOR.
+if [ -n "${DOTFILES_PROMPT_LABEL:-}" ]; then
+  case ${DOTFILES_PROMPT_COLOR:-cyan} in
+    yellow|green|magenta|cyan) _dotfiles_prompt_color=$DOTFILES_PROMPT_COLOR ;;
+    *) _dotfiles_prompt_color=cyan ;;
+  esac
+  PS1="%F{${_dotfiles_prompt_color}}%B${DOTFILES_PROMPT_LABEL}%b%f %n:%~%# "
+  unset _dotfiles_prompt_color
+else
+  PS1='%n@%m:%~%# '
+fi

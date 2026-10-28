@@ -27,7 +27,21 @@ if [ -z "${BASH_COMPLETION_VERSINFO:-}" ] && [ -z "${POSIXLY_CORRECT:-}" ]; then
   fi
 fi
 
-PS1='\u@\h:\w\$ '
+# local.sh may set DOTFILES_PROMPT_LABEL to replace the hostname. Two
+# asset numbers like s1135912 and s1124692 are too easy to mix up.
+# DOTFILES_PROMPT_COLOR: cyan, yellow, green, or magenta.
+if [ -n "${DOTFILES_PROMPT_LABEL:-}" ]; then
+  case ${DOTFILES_PROMPT_COLOR:-cyan} in
+    yellow) _dotfiles_prompt_color=33 ;;
+    green) _dotfiles_prompt_color=32 ;;
+    magenta) _dotfiles_prompt_color=35 ;;
+    *) _dotfiles_prompt_color=36 ;;
+  esac
+  PS1="\[\e[${_dotfiles_prompt_color}m\]${DOTFILES_PROMPT_LABEL}\[\e[0m\] \u:\w\$ "
+  unset _dotfiles_prompt_color
+else
+  PS1='\u@\h:\w\$ '
+fi
 
 # Emacs C-d is delete-char. In bash, Ctrl-D on an empty line is EOF and
 # exits the shell, which makes Herdr close the tab. Refuse that.

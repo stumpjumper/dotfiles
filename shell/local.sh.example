@@ -10,3 +10,8 @@
 #
 # Completions that need `compdef` (bun): guard with DOTFILES_POST_COMPINIT.
 # zshrc re-sources this file after compinit.
+#
+# Prompt label, optional. Replaces the hostname so similar asset names
+# are not what you read. Color: cyan, yellow, green, or magenta.
+#   DOTFILES_PROMPT_LABEL=studio
+#   DOTFILES_PROMPT_COLOR=cyan
