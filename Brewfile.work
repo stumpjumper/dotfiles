@@ -1,6 +1,7 @@
-# Work Mac — slim. Do not copy turbo's media/build stack.
+# Work laptop (s1124692) and work Studio (s1135912).
+# Slim. Do not copy turbo's media/build stack.
+# herdr is home-only. Do not install it on a work Mac.
 brew "emacs"
 brew "gh"
-brew "herdr"
 brew "ripgrep"
 brew "tmux"
