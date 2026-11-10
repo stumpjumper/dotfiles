@@ -1,0 +1,49 @@
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# requires-python = ">=3.10,<3.14"
+# dependencies = ["iterm2"]
+# ///
+"""Set the front iTerm2 window's title so it sticks.
+
+    hardset_iterm2_window_name "🏠🖥️ claude_mac_care"
+    hardset_iterm2_window_name --clear      # drop the override, back to normal titles
+
+Same as Window > Edit Window Title: an override that programs' title escape
+sequences (shells, tmux, Claude Code) don't change. Uses iTerm2's Python API
+(Window.async_set_title), not GUI scripting, so no Accessibility permission and
+no clipboard use.
+
+Needs: iTerm2 Settings > General > Magic > Enable Python API (on), and uv.
+First run: iTerm2 asks whether to allow this script to connect; choose
+"Always Allow". Acts on the frontmost (key) iTerm2 window.
+
+Local only: run it in a window on this Mac's own screen. The API refuses
+connections from SSH sessions, and couldn't reach a remote Mac's iTerm2 anyway.
+"""
+import sys
+
+import iterm2
+
+
+def usage(code: int) -> None:
+    print(__doc__.strip().split("\n\n")[1], file=sys.stderr)
+    sys.exit(code)
+
+
+args = sys.argv[1:]
+if args in ([], ["-h"], ["--help"]):
+    usage(0 if args else 2)
+title = "" if args == ["--clear"] else " ".join(args)
+# The title is an iTerm2 interpolated string: escape backslashes so "\(" stays literal.
+title = title.replace("\\", "\\\\")
+
+
+async def main(connection: iterm2.Connection) -> None:
+    app = await iterm2.async_get_app(connection)
+    win = app.current_terminal_window
+    if win is None:
+        sys.exit("hardset_iterm2_window_name: no iTerm2 window is in front")
+    await win.async_set_title(title)
+
+
+iterm2.run_until_complete(main)

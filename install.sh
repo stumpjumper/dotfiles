@@ -177,6 +177,7 @@ mkdir -p "$HOME/bin"
 relink "$REPO_DIR/bin/git_commit.py" "$HOME/bin/git_commit"
 relink "$REPO_DIR/bin/get_temps"     "$HOME/bin/get_temps"
 relink "$REPO_DIR/bin/dynu_update.sh" "$HOME/bin/dynu_update.sh"
+relink "$REPO_DIR/bin/hardset_iterm2_window_name" "$HOME/bin/hardset_iterm2_window_name"  # macOS + iTerm2; needs uv
 
 echo
 echo "Done. Open a new shell."
