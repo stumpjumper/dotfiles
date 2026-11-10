@@ -75,8 +75,22 @@ herdr/    config.toml       ← Darwin only
 git/      gitconfig
 ssh/      config.home  config.work  config.sandbox  config.local.turbo.example
 bin/      from pi-dots
+claude/   statusline.sh     ← Claude Code status line (see below)
 hosts/    reference crontabs; not auto-applied
 ```
+
+## Claude Code status line
+
+`install.sh` links `claude/statusline.sh` to `~/.claude/scripts/statusline.sh`. It does
+not touch `~/.claude/settings.json`; set this once per machine (needs `jq`):
+
+```json
+"statusLine": { "type": "command", "command": "bash ~/.claude/scripts/statusline.sh", "padding": 0 }
+```
+
+Shows context %, cache hit, plan usage, model, project, `~$` session estimate, `+$` last
+rise and an 8-character plot of recent rises (`.` `·` `¯`). Field-by-field docs are in
+the script header.
 
 ## Machines
 

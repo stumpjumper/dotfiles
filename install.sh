@@ -172,6 +172,10 @@ else
   echo "  ~/.config/dotfiles/local.sh already exists, leaving it"
 fi
 
+# --- claude code: status line script only; settings.json is machine-local, not managed ---
+mkdir -p "$HOME/.claude/scripts"
+relink "$REPO_DIR/claude/statusline.sh" "$HOME/.claude/scripts/statusline.sh"  # needs jq
+
 # --- bin ---
 mkdir -p "$HOME/bin"
 relink "$REPO_DIR/bin/git_commit.py" "$HOME/bin/git_commit"
