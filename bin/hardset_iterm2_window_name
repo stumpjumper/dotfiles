@@ -3,56 +3,85 @@
 # requires-python = ">=3.10,<3.14"
 # dependencies = ["iterm2"]
 # ///
-"""Set (or show) the front iTerm2 window's title so it sticks.
-
-    hardset_iterm2_window_name "🏠🖥️ claude_mac_care"
-    hardset_iterm2_window_name              # print the current override (exit 1 if none)
-    hardset_iterm2_window_name --clear      # drop the override, back to normal titles
+"""Set or show the front iTerm2 window's title so it sticks.
 
 Same as Window > Edit Window Title: an override that programs' title escape
-sequences (shells, tmux, Claude Code) don't change. Uses iTerm2's Python API
-(Window.async_set_title), not GUI scripting, so no Accessibility permission and
-no clipboard use.
+sequences (shells, tmux, Claude Code) don't change. Uses iTerm2's Python API,
+not GUI scripting, so no Accessibility permission and no clipboard use.
 
-Needs: iTerm2 Settings > General > Magic > Enable Python API (on), and uv.
-First run: iTerm2 asks whether to allow this script to connect; choose
-"Always Allow". Acts on the frontmost (key) iTerm2 window.
-
-Local only: run it in a window on this Mac's own screen. The API refuses
-connections from SSH sessions, and couldn't reach a remote Mac's iTerm2 anyway.
+Needs: iTerm2 Settings > General > Magic > Enable Python API, and uv. First run:
+iTerm2 asks whether to allow the connection; choose "Always Allow".
+Local only: the API refuses connections from SSH sessions.
+Behind TLS inspection, uv needs UV_SYSTEM_CERTS=1 to download the iterm2 package.
 """
+import argparse
 import sys
 
 import iterm2
 
-
-def usage(code: int) -> None:
-    print(__doc__.strip().split("\n\n")[1], file=sys.stderr)
-    sys.exit(code)
+PROG = "hardset_iterm2_window_name"
 
 
-args = sys.argv[1:]
-if args in (["-h"], ["--help"]):
-    usage(0)
-get = not args
-title = "" if args == ["--clear"] else " ".join(args)
-# The title is an iTerm2 interpolated string: escape backslashes so "\(" stays literal.
-title = title.replace("\\", "\\\\")
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        prog=PROG,
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=(
+            "examples:\n"
+            f'  {PROG} "🏠🖥️ claude_mac_care"   set the title\n'
+            f"  {PROG}                       print it (exit 1 if none set)\n"
+            f"  {PROG} --clear               back to normal titles"
+        ),
+    )
+    parser.add_argument("title", nargs="*", help="new title (words are joined with spaces)")
+    parser.add_argument("--clear", action="store_true", help="remove the title override")
+    args = parser.parse_args()
+    if args.clear and args.title:
+        parser.error("--clear takes no title")
+    return args
 
 
-async def main(connection: iterm2.Connection) -> None:
+def as_literal(text: str) -> str:
+    """Window titles are iTerm2 interpolated strings; escape so '\\(' stays literal."""
+    return text.replace("\\", "\\\\")
+
+
+async def front_window(connection: iterm2.Connection) -> iterm2.Window:
     app = await iterm2.async_get_app(connection)
-    win = app.current_terminal_window
-    if win is None:
-        sys.exit("hardset_iterm2_window_name: no iTerm2 window is in front")
-    if get:
-        # titleOverride = the evaluated Edit Window Title text; empty when none is set.
-        cur = await win.async_get_variable("titleOverride")
-        if not cur:
-            sys.exit(1)
-        print(cur)
-        return
-    await win.async_set_title(title)
+    window = app.current_terminal_window
+    if window is None:
+        sys.exit(f"{PROG}: no iTerm2 window is in front")
+    return window
 
 
-iterm2.run_until_complete(main)
+async def get_title(window: iterm2.Window) -> str:
+    """The Edit Window Title text, or '' when no override is set."""
+    return await window.async_get_variable("titleOverride") or ""
+
+
+async def set_title(window: iterm2.Window, title: str) -> None:
+    """Set the override; '' removes it."""
+    await window.async_set_title(as_literal(title))
+
+
+def main() -> None:
+    args = parse_args()
+
+    async def run(connection: iterm2.Connection) -> None:
+        window = await front_window(connection)
+        if args.clear:
+            await set_title(window, "")
+        elif args.title:
+            await set_title(window, " ".join(args.title))
+        else:
+            title = await get_title(window)
+            if not title:
+                sys.exit(1)
+            print(title)
+
+    iterm2.run_until_complete(run)
+
+
+if __name__ == "__main__":
+    main()
