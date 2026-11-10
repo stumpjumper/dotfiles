@@ -3,9 +3,10 @@
 # requires-python = ">=3.10,<3.14"
 # dependencies = ["iterm2"]
 # ///
-"""Set the front iTerm2 window's title so it sticks.
+"""Set (or show) the front iTerm2 window's title so it sticks.
 
     hardset_iterm2_window_name "🏠🖥️ claude_mac_care"
+    hardset_iterm2_window_name              # print the current override (exit 1 if none)
     hardset_iterm2_window_name --clear      # drop the override, back to normal titles
 
 Same as Window > Edit Window Title: an override that programs' title escape
@@ -31,8 +32,9 @@ def usage(code: int) -> None:
 
 
 args = sys.argv[1:]
-if args in ([], ["-h"], ["--help"]):
-    usage(0 if args else 2)
+if args in (["-h"], ["--help"]):
+    usage(0)
+get = not args
 title = "" if args == ["--clear"] else " ".join(args)
 # The title is an iTerm2 interpolated string: escape backslashes so "\(" stays literal.
 title = title.replace("\\", "\\\\")
@@ -43,6 +45,13 @@ async def main(connection: iterm2.Connection) -> None:
     win = app.current_terminal_window
     if win is None:
         sys.exit("hardset_iterm2_window_name: no iTerm2 window is in front")
+    if get:
+        # titleOverride = the evaluated Edit Window Title text; empty when none is set.
+        cur = await win.async_get_variable("titleOverride")
+        if not cur:
+            sys.exit(1)
+        print(cur)
+        return
     await win.async_set_title(title)
 
 
