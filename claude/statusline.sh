@@ -16,10 +16,10 @@
 #   ~$1.81       Claude Code's own estimate for this session (.cost.total_cost_usd), computed
 #                locally from its price table -- NOT your bill. Absent at $0. To drop the "~",
 #                edit the two printf "~$..." lines below.
-#   +$0.31       how much ~$ rose at its last change (roughly: the last API request). Yellow
+#   Δ$0.31       how much ~$ rose at its last change (roughly: the last API request). Yellow
 #                when cache hit is under 50% (cache misses), green otherwise (context reads).
 #   ..·¯....     the last 8 rises, oldest left: each vs the cheapest of the 8 (ignoring
-#                under $0.01). "." under 1.5x, "·" 1.5-2x, "¯" 2x+. Coloured like +$, per rise.
+#                under $0.01). "." under 1.5x, "·" 1.5-2x, "¯" 2x+. Coloured like Δ$, per rise.
 #                State: ~/.claude/statusline-state/<session_id> = "<last cost> <delta>:<hit>...";
 #                written only when the cost changes; files older than 7 days are pruned.
 #   ~/x         cwd basename; "~/x" under $HOME, ".../x" outside it (dim)
@@ -102,7 +102,7 @@ case "$c_in$c_new$c_read" in *[!0-9]*) ;; *)
   if [ "$tot" -gt 0 ]; then hit=$(( c_read * 100 / tot )); cache="cache:${hit}%"; fi
 esac
 
-# --- spend rate: +$ for the last cost rise, and a plot of the last 8 ---------------
+# --- spend rate: Δ$ for the last cost rise, and a plot of the last 8 ---------------
 # State file: "<last cost> <delta>:<hit%> ..." (oldest first, at most 8 entries). It is
 # rewritten only when the cost moves, so redraws between requests show the same values.
 # No baseline (new file, or a session already running at install): record, show nothing.
@@ -149,7 +149,7 @@ if [ -n "$ccost" ] && [ -n "$sid" ] && [ "$sid" != "-" ]; then
   if [ "$upd" = 1 ]; then
     printf '%s %s\n' "$cost" "$hist" > "$sf.$$" 2>/dev/null && mv -f "$sf.$$" "$sf" 2>/dev/null
   fi
-  [ -n "$last" ] && dcost=$(awk -v v="$last" 'BEGIN{ printf "+$%.2f", v+0 }')
+  [ -n "$last" ] && dcost=$(awk -v v="$last" 'BEGIN{ printf "Δ$%.2f", v+0 }')
   [ -n "$dcost" ] || dplot=""
 fi
 
@@ -186,7 +186,7 @@ if [ -n "$cache" ]; then
 fi
 # With plan usage shown, ~$ is notional (Pro/Max), so it goes dim; with an API key it stays green.
 E=""; if [ -n "$ccost" ]; then if [ -n "$plan" ]; then E=" $D$ccost$R"; else E=" $G$ccost$R"; fi; fi
-# +$ is coloured by why it rose: yellow = cache misses, green = cache reads of a big context.
+# Δ$ is coloured by why it rose: yellow = cache misses, green = cache reads of a big context.
 if [ -n "$dcost" ]; then if [ -n "$cache" ] && [ "$hit" -lt 50 ]; then E="$E $Y$dcost$R"; else E="$E $G$dcost$R"; fi; fi
 [ -n "$dplot" ] && E="$E $dplot"   # already coloured per character
 printf '%sctx:%s%%%s%s%s %s%s%s %s%s%s%s %s%s%s\n' \

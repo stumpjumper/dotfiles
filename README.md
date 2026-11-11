@@ -88,7 +88,7 @@ not touch `~/.claude/settings.json`; set this once per machine (needs `jq`):
 "statusLine": { "type": "command", "command": "bash ~/.claude/scripts/statusline.sh", "padding": 0 }
 ```
 
-Shows context %, cache hit, plan usage, model, project, `~$` session estimate, `+$` last
+Shows context %, cache hit, plan usage, model, project, `~$` session estimate, `Δ$` last
 rise and an 8-character plot of recent rises (`.` `·` `¯`). Field-by-field docs are in
 the script header.
 
